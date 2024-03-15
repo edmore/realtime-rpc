@@ -5,7 +5,7 @@ package v1;
 option go_package =  "github.com/pennsieve/jit-calculation-service/api/v1";
 
 service Jit {
-  rpc Calculate(CalculationRequest) returns (CalculationResponse){}
+  rpc Calculate(stream CalculationRequest) returns (stream CalculationResponse){}
 }
 
 message CalculationRequest{

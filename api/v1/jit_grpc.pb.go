@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JitClient interface {
-	Calculate(ctx context.Context, in *CalculationRequest, opts ...grpc.CallOption) (*CalculationResponse, error)
+	Calculate(ctx context.Context, opts ...grpc.CallOption) (Jit_CalculateClient, error)
 }
 
 type jitClient struct {
@@ -37,20 +37,42 @@ func NewJitClient(cc grpc.ClientConnInterface) JitClient {
 	return &jitClient{cc}
 }
 
-func (c *jitClient) Calculate(ctx context.Context, in *CalculationRequest, opts ...grpc.CallOption) (*CalculationResponse, error) {
-	out := new(CalculationResponse)
-	err := c.cc.Invoke(ctx, Jit_Calculate_FullMethodName, in, out, opts...)
+func (c *jitClient) Calculate(ctx context.Context, opts ...grpc.CallOption) (Jit_CalculateClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Jit_ServiceDesc.Streams[0], Jit_Calculate_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &jitCalculateClient{stream}
+	return x, nil
+}
+
+type Jit_CalculateClient interface {
+	Send(*CalculationRequest) error
+	Recv() (*CalculationResponse, error)
+	grpc.ClientStream
+}
+
+type jitCalculateClient struct {
+	grpc.ClientStream
+}
+
+func (x *jitCalculateClient) Send(m *CalculationRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *jitCalculateClient) Recv() (*CalculationResponse, error) {
+	m := new(CalculationResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // JitServer is the server API for Jit service.
 // All implementations must embed UnimplementedJitServer
 // for forward compatibility
 type JitServer interface {
-	Calculate(context.Context, *CalculationRequest) (*CalculationResponse, error)
+	Calculate(Jit_CalculateServer) error
 	mustEmbedUnimplementedJitServer()
 }
 
@@ -58,8 +80,8 @@ type JitServer interface {
 type UnimplementedJitServer struct {
 }
 
-func (UnimplementedJitServer) Calculate(context.Context, *CalculationRequest) (*CalculationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Calculate not implemented")
+func (UnimplementedJitServer) Calculate(Jit_CalculateServer) error {
+	return status.Errorf(codes.Unimplemented, "method Calculate not implemented")
 }
 func (UnimplementedJitServer) mustEmbedUnimplementedJitServer() {}
 
@@ -74,22 +96,30 @@ func RegisterJitServer(s grpc.ServiceRegistrar, srv JitServer) {
 	s.RegisterService(&Jit_ServiceDesc, srv)
 }
 
-func _Jit_Calculate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CalculationRequest)
-	if err := dec(in); err != nil {
+func _Jit_Calculate_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(JitServer).Calculate(&jitCalculateServer{stream})
+}
+
+type Jit_CalculateServer interface {
+	Send(*CalculationResponse) error
+	Recv() (*CalculationRequest, error)
+	grpc.ServerStream
+}
+
+type jitCalculateServer struct {
+	grpc.ServerStream
+}
+
+func (x *jitCalculateServer) Send(m *CalculationResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *jitCalculateServer) Recv() (*CalculationRequest, error) {
+	m := new(CalculationRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(JitServer).Calculate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Jit_Calculate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JitServer).Calculate(ctx, req.(*CalculationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 // Jit_ServiceDesc is the grpc.ServiceDesc for Jit service.
@@ -98,12 +128,14 @@ func _Jit_Calculate_Handler(srv interface{}, ctx context.Context, dec func(inter
 var Jit_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "v1.Jit",
 	HandlerType: (*JitServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Calculate",
-			Handler:    _Jit_Calculate_Handler,
+			StreamName:    "Calculate",
+			Handler:       _Jit_Calculate_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/v1/jit.proto",
 }

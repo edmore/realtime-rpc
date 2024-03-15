@@ -1,7 +1,7 @@
 package server
 
 import (
-	"context"
+	"io"
 
 	api "github.com/pennsieve/jit-calculation-service/api/v1"
 	"google.golang.org/grpc"
@@ -31,10 +31,19 @@ func newgrpcServer() (srv *grpcServer, err error) {
 	return srv, nil
 }
 
-func (s *grpcServer) Calculate(ctx context.Context, req *api.CalculationRequest) (*api.CalculationResponse, error) {
+func (s *grpcServer) Calculate(stream api.Jit_CalculateServer) error {
 
-	// delegate to library
-	result := req.Input * req.Input
-
-	return &api.CalculationResponse{Result: result}, nil
+	for {
+		in, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		result := in.Input * in.Input
+		if err := stream.Send(&api.CalculationResponse{Result: result}); err != nil {
+			return err
+		}
+	}
 }

@@ -2,11 +2,13 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"io"
+	"log"
 	"net"
 	"testing"
 
 	api "github.com/pennsieve/jit-calculation-service/api/v1"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -29,11 +31,36 @@ func TestServer(t *testing.T) {
 	}
 	cc, err := grpc.Dial(l.Addr().String(), clientOptions...)
 	require.NoError(t, err)
+
 	client := api.NewJitClient(cc)
 
-	response, err := client.Calculate(ctx, &api.CalculationRequest{Input: 4})
-	require.NoError(t, err)
-	fmt.Println(response)
+	stream, err := client.Calculate(ctx)
+	if err != nil {
+		log.Fatalf("Failed to setup stream : %v", err)
+	}
+	waitc := make(chan struct{})
+	go func() {
+		for {
+			in, err := stream.Recv()
+			if err == io.EOF {
+				// read done.
+				close(waitc)
+				return
+			}
+			if err != nil {
+				log.Fatalf("Failed to receive result : %v", err)
+			}
+			expected := int64(16)
+			assert.Equal(t, expected, in.Result)
+		}
+	}()
+
+	if err := stream.Send(&api.CalculationRequest{Input: 4}); err != nil {
+		log.Fatalf("Failed to send an input: %v", err)
+	}
+
+	stream.CloseSend()
+	<-waitc
 
 	defer teardown(server, cc, l)
 }
