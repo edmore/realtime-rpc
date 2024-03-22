@@ -12,3 +12,11 @@ compile:
 
 test:
 		go test -race ./...
+
+create:
+		docker build -f Dockerfile.terraform -t pennsieve/realtime-rpc . --progress=plain
+		docker-compose run realtime-rpc create
+
+destroy:
+		docker build -f Dockerfile.terraform -t pennsieve/realtime-rpc . --progress=plain
+		docker-compose run realtime-rpc destroy

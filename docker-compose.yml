@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  realtime-rpc:
+    env_file:
+      - infra.env
+    image: pennsieve/realtime-rpc
+    volumes:
+      - ./terraform:/service/terraform
+      - $HOME/.aws:/root/.aws:ro
+    container_name: realtime-rpc
+    build:
+      context: .
+      dockerfile: ./Dockerfile.terraform

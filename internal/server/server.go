@@ -2,6 +2,7 @@ package server
 
 import (
 	"io"
+	"log"
 
 	api "github.com/pennsieve/jit-calculation-service/api/v1"
 	"google.golang.org/grpc"
@@ -42,6 +43,7 @@ func (s *grpcServer) Calculate(stream api.Jit_CalculateServer) error {
 			return err
 		}
 		result := in.Input * in.Input
+		log.Println("result", result)
 		if err := stream.Send(&api.CalculationResponse{Result: result}); err != nil {
 			return err
 		}
