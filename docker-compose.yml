@@ -1,14 +1,14 @@
 version: '3.9'
 
 services:
-  realtime-rpc:
+  realtime-rpc-deploy:
     env_file:
       - infra.env
-    image: pennsieve/realtime-rpc
+    image: pennsieve/realtime-rpc-deploy
     volumes:
       - ./terraform:/service/terraform
       - $HOME/.aws:/root/.aws:ro
-    container_name: realtime-rpc
+    container_name: realtime-rpc-deploy
     build:
       context: .
       dockerfile: ./Dockerfile.terraform
