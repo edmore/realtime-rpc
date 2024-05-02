@@ -4,7 +4,7 @@ services:
   realtime-rpc-deploy:
     env_file:
       - infra.env
-    image: pennsieve/realtime-rpc-deploy
+    image: edmore/realtime-rpc-deploy
     volumes:
       - ./terraform:/service/terraform
       - $HOME/.aws:/root/.aws:ro

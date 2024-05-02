@@ -5,10 +5,15 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	api "github.com/edmore/realtime-rpc/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+)
+
+var (
+	address = "localhost:50051"
 )
 
 func main() {
@@ -18,7 +23,10 @@ func main() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 	log.Println("dialing")
-	cc, err := grpc.Dial(":50051", clientOptions...)
+	if ep, ok := os.LookupEnv("SERVER_ENDPOINT"); ok {
+		address = ep
+	}
+	cc, err := grpc.Dial(address, clientOptions...)
 	if err != nil {
 		log.Fatalf("something went wrong")
 	}
