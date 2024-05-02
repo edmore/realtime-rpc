@@ -97,3 +97,41 @@ resource "aws_ecs_service" "realtime-rpc" {
     }
   }
 }
+
+
+// ECS Task definition - realtime-rpc-client
+resource "aws_ecs_task_definition" "realtime-rpc-client" {
+  family                = "realtime-rpc-client"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 2048
+  memory                   = 4096
+  task_role_arn      = aws_iam_role.task_role_for_ecs_task.arn
+  execution_role_arn = aws_iam_role.execution_role_for_ecs_task.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "realtime-rpc-client"
+      image     = aws_ecr_repository.realtime-rpc-client.repository_url
+      environment: [
+        {"name": "SERVER_ENDPOINT", "value": "${var.service_endpoint}"}
+      ],
+      essential = true
+      portMappings = [
+        {
+          containerPort = 8081
+          hostPort      = 8081
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group = "/ecs/realtime-rpc-client/logs"
+          awslogs-region = var.region
+          awslogs-stream-prefix = "ecs"
+          awslogs-create-group = "true"
+        }
+      }
+    }
+  ])
+}

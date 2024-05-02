@@ -32,4 +32,7 @@ deploy:
 		docker buildx build --platform linux/amd64 --progress=plain -t edmore/realtime-rpc .
 		docker tag edmore/realtime-rpc ${APP_REPO}
 		docker push ${APP_REPO}
+		docker buildx build --platform linux/amd64 --progress=plain -t edmore/realtime-rpc-client client/.
+		docker tag edmore/realtime-rpc-client ${CLIENT_REPO}
+		docker push ${CLIENT_REPO}
 
