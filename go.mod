@@ -1,4 +1,4 @@
-module github.com/pennsieve/jit-calculation-service
+module github.com/edmore/realtime-rpc
 
 go 1.21.3
 

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package v1;
 
-option go_package =  "github.com/pennsieve/jit-calculation-service/api/v1";
+option go_package =  "github.com/edmore/realtime-rpc/api/v1";
 
 service Jit {
   rpc Calculate(stream CalculationRequest) returns (stream CalculationResponse){}

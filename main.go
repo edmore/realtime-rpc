@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/pennsieve/jit-calculation-service/internal/server"
+	"github.com/edmore/realtime-rpc/internal/server"
 )
 
 const (

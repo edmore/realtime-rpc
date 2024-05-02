@@ -76,7 +76,7 @@ resource "aws_ecs_service" "realtime-rpc" {
   cluster         = aws_ecs_cluster.realtime_cluster.id
   task_definition = aws_ecs_task_definition.realtime-rpc.arn
   launch_type = "FARGATE"
-  desired_count = 0
+  desired_count = 1
 
   network_configuration {
     subnets = local.subnet_ids_list
@@ -90,7 +90,7 @@ resource "aws_ecs_service" "realtime-rpc" {
     service {
       client_alias {
         dns_name = "grpc-service"
-        port = "80"
+        port = "50051"
       }
       discovery_name = "realtime-grpc-service"
       port_name = "grpc-port"
