@@ -8,6 +8,12 @@ resource "aws_cloudwatch_log_group" "realtime_cluster" {
   name = "ecs-cluster-log"
 }
 
+
+resource "aws_service_discovery_http_namespace" "realtime_service_namespace" {
+  name        = "realtime-namespace"
+  description = "service namespace"
+}
+
 resource "aws_ecs_cluster" "realtime_cluster" {
   name = "realtime_cluster"
 
@@ -21,6 +27,10 @@ resource "aws_ecs_cluster" "realtime_cluster" {
         cloud_watch_log_group_name     = aws_cloudwatch_log_group.realtime_cluster.name
       }
     }
+  }
+
+  service_connect_defaults {
+    namespace = aws_service_discovery_http_namespace.realtime_service_namespace.arn
   }
 }
 
@@ -43,6 +53,7 @@ resource "aws_ecs_task_definition" "realtime-rpc" {
       essential = true
       portMappings = [
         {
+          name = "grpc-port"
           containerPort = 50051
           hostPort      = 50051
         }
@@ -65,11 +76,24 @@ resource "aws_ecs_service" "realtime-rpc" {
   cluster         = aws_ecs_cluster.realtime_cluster.id
   task_definition = aws_ecs_task_definition.realtime-rpc.arn
   launch_type = "FARGATE"
-  desired_count = 0
+  desired_count = 1
 
   network_configuration {
     subnets = local.subnet_ids_list
     assign_public_ip = true
     security_groups = [aws_default_security_group.default.id]
+  }
+
+  service_connect_configuration {
+    enabled = true
+    namespace = aws_service_discovery_http_namespace.realtime_service_namespace.arn
+    service {
+      client_alias {
+        dns_name = "grpc-service"
+        port = "50051"
+      }
+      discovery_name = "realtime-grpc-service"
+      port_name = "grpc-port"
+    }
   }
 }

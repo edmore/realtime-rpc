@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	api "github.com/pennsieve/jit-calculation-service/api/v1"
+	api "github.com/edmore/realtime-rpc/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -7,7 +7,7 @@ import (
 	"net"
 	"testing"
 
-	api "github.com/pennsieve/jit-calculation-service/api/v1"
+	api "github.com/edmore/realtime-rpc/api/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
