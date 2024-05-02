@@ -9,7 +9,7 @@ if [ $1 = "create" ]; then
     export TF_LOG_PATH="error.log"
     export TF_LOG=TRACE
     terraform init
-    terraform plan -out=tfplan
+    terraform plan -out=tfplan -var-file="rpc.tfvars"
     terraform apply tfplan
     # cat error.log | grep "[ERROR"
 elif [ $1 = "status" ]; then
@@ -17,12 +17,13 @@ elif [ $1 = "status" ]; then
     export TF_LOG_PATH="error.log"
     export TF_LOG=TRACE
     terraform init
-    terraform plan -out=tfplan
+    terraform plan -out=tfplan -var-file="rpc.tfvars"
     terraform output
     # cat error.log | grep "[ERROR"    
 else
     echo "deleting ..."
-    terraform apply -destroy -auto-approve
+    terraform apply -destroy -auto-approve -var-file="rpc.tfvars"
+
 fi
 
 

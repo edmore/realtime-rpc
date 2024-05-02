@@ -14,22 +14,25 @@ test:
 		go test -race ./...
 
 create:
-		docker build -f Dockerfile.terraform -t pennsieve/realtime-rpc-deploy . --progress=plain
+		docker build -f Dockerfile.terraform -t edmore/realtime-rpc-deploy . --progress=plain
 		docker-compose run realtime-rpc-deploy create
 
 status:
-		docker build -f Dockerfile.terraform -t pennsieve/realtime-rpc-deploy . --progress=plain
+		docker build -f Dockerfile.terraform -t edmore/realtime-rpc-deploy . --progress=plain
 		docker-compose run realtime-rpc-deploy status
 
 
 destroy:
-		docker build -f Dockerfile.terraform -t pennsieve/realtime-rpc-deploy . --progress=plain
+		docker build -f Dockerfile.terraform -t edmore/realtime-rpc-deploy . --progress=plain
 		docker-compose run realtime-rpc-deploy destroy
 
 
 deploy:
 		aws ecr get-login-password --profile ${AWS_PROFILE} --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-		docker buildx build --platform linux/amd64 --progress=plain -t pennsieve/realtime-rpc .
-		docker tag pennsieve/realtime-rpc ${APP_REPO}
+		docker buildx build --platform linux/amd64 --progress=plain -t edmore/realtime-rpc .
+		docker tag edmore/realtime-rpc ${APP_REPO}
 		docker push ${APP_REPO}
+		docker buildx build --platform linux/amd64 --progress=plain -t edmore/realtime-rpc-client client/.
+		docker tag edmore/realtime-rpc-client ${CLIENT_REPO}
+		docker push ${CLIENT_REPO}
 

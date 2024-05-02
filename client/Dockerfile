@@ -3,6 +3,7 @@ WORKDIR /app/
 COPY . /app/
 
 RUN ls -alh
+RUN go clean -modcache
 RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o /app/jit-client .
 
