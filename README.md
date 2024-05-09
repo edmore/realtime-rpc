@@ -43,3 +43,8 @@ docker run -itd \
  ```
 
  6. Once deployed. Navigate to Amazon Elastic Service > Task Definitions > realtime-rpc-client > select and "run task" > select cluster and "create" (this will invoke the task) > check client and server logs for result.
+
+
+ **Future Work**
+
+ Connecting directly to the server from the internet: https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/
