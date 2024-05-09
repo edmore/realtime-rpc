@@ -33,7 +33,7 @@ docker run -itd \
  **To run on the cloud:**
 
  1. Rename `infa.env.sample` to `infra.dev`
- 2. Pr-requisites: AWS (prerequisite(s): [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
+ 2. Pre-requisites: AWS (prerequisite(s): [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
  3. Update the env file with your AWS [profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-methods) and region
  4. To create the infrastructure: `make create`
  5. To deploy:
