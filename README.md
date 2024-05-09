@@ -22,7 +22,9 @@ Based on: https://aws.amazon.com/blogs/opensource/containerize-and-deploy-a-grpc
  ```
 
  You can also opt to run the images on separate terminals:
+
  `docker run --name jit_server jit_server`
+ 
  `docker run -it --name jit_client --link jit_server --env "SERVER_ENDPOINT=jit_server:50051" jit_client`
 
  **To run on the cloud:**
