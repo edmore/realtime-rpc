@@ -47,4 +47,4 @@ docker run -itd \
 
  **Future Work**
 
- Connecting directly to the server from the internet: https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/
+ Connecting directly to the RPC server from the internet: https://aws.amazon.com/blogs/aws/new-application-load-balancer-support-for-end-to-end-http-2-and-grpc/
