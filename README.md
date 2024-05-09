@@ -6,21 +6,13 @@ Based on: https://aws.amazon.com/blogs/opensource/containerize-and-deploy-a-grpc
 
 *Build:*
 
-```
-docker build -t jit_server .
-docker build --no-cache -t jit_client client/.
+`docker build -t jit_server .`
+`docker build --no-cache -t jit_client client/.`
 
-docker run -d \                               
-    --name jit_server \
-    jit_server
+`docker run -d --name jit_server jit_server`
 
-docker run -itd \                  
-    --name jit_client \
-    --link jit_server \
-    --env "SERVER_ENDPOINT=jit_server:50051" \
-    jit_client
+`docker run -itd --name jit_client --link jit_server --env "SERVER_ENDPOINT=jit_server:50051" jit_client`
 
- ```   
 
  *To view output:*
  ```
@@ -28,7 +20,9 @@ docker run -itd \
  docker logs jit_client
  ```
 
- You can also opt to run the images on separate terminals.
+ You can also opt to run the images on separate terminals:
+ `docker run --name jit_server jit_server`
+ `docker run -it --name jit_client --link jit_server --env "SERVER_ENDPOINT=jit_server:50051" jit_client`
 
  **To run on the cloud:**
 
