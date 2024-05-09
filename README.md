@@ -7,6 +7,7 @@ Based on: https://aws.amazon.com/blogs/opensource/containerize-and-deploy-a-grpc
 *Build:*
 
 `docker build -t jit_server .`
+
 `docker build --no-cache -t jit_client client/.`
 
 `docker run -d --name jit_server jit_server`
